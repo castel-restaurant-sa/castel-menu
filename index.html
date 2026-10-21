@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مطعم كاستل | المنيو</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff3e5;color:#302016;font-family:Arial,sans-serif}
+header{background:#f47716;color:white;text-align:center;padding:30px 12px}
+h1{margin:0;font-size:38px}
+header p{margin:10px 0 0}
+main{max-width:650px;margin:auto;padding:16px}
+nav{display:flex;gap:8px;overflow:auto;padding:8px 0}
+button{border:0;border-radius:12px;padding:13px;cursor:pointer;font-size:15px}
+nav button{white-space:nowrap;background:white}
+nav button.active,.add{background:#f47716;color:white}
+.card{background:white;border-radius:18px;padding:20px;margin:12px 0;box-shadow:0 3px 12px #0001}
+.card h3{margin:0 0 12px}
+.add{background:#f47716;color:white;font-weight:bold}
+.cart{background:white;border-radius:18px;padding:18px;margin-top:20px}
+#items{line-height:2}
+#send{background:#168a4c;color:white;width:100%;font-weight:bold;margin-top:12px}
+small{color:#766b60}
+</style>
+</head>
+<body>
+<header><h1>كاستل</h1><p>THE REAL TASTE</p></header>
+<main>
+<nav id="tabs"></nav>
+<section id="products"></section>
+<div class="cart">
+<h2>🛒 سلة الطلبات</h2>
+<div id="items">السلة فارغة</div>
+<button id="send" onclick="sendOrder()">إرسال الطلب عبر واتساب</button>
+</div>
+</main>
+<script>
+const categories=[
+["الوجبات الأساسية",["وجبة كاستل","ساندويتش كاستل","وجبة روستو"]],
+["السناكات",[]],
+["الصوصات",["صوص كاستل","باربكيو","سبايسي","هاني ماسترد","صوص التشدر"]],
+["المشروبات",["بيبسي","بيبسي دايت","سفن أب","سفن أب دايت","ميرندا برتقال","ميرندا حمضيات"]]
+];
+let selected=0,cart={};
+function showCategory(i){
+selected=i;
+document.getElementById("tabs").innerHTML=categories.map((c,n)=>'<button class="'+(n===i?'active':'')+'" onclick="showCategory('+n+')">'+c[0]+'</button>').join("");
+let names=categories[i][1];
+document.getElementById("products").innerHTML=names.length?names.map(name=>'<div class="card"><h3>'+name+'</h3><small>الصورة والسعر يُضافان بعد الاعتماد</small><p><button class="add" onclick="addItem(this.dataset.name)" data-name="'+name+'">+ أضف للسلة</button></p></div>').join(""):'<div class="card">سيتم إضافة منتجات هذا القسم قريبًا.</div>';
+}
+function addItem(name){cart[name]=(cart[name]||0)+1;renderCart();}
+function removeItem(name){if(cart[name])cart[name]--;if(!cart[name])delete cart[name];renderCart();}
+function renderCart(){
+let entries=Object.entries(cart);
+document.getElementById("items").innerHTML=entries.length?entries.map(([name,q])=>'<div>'+name+' × '+q+' <button data-name="'+name+'" onclick="removeItem(this.dataset.name)">−</button></div>').join(""):"السلة فارغة";
+}
+function sendOrder(){
+let entries=Object.entries(cart);
+if(!entries.length){alert("أضف منتجًا أولًا");return;}
+let msg="طلب جديد من منيو كاستل:\n"+entries.map(([name,q])=>name+" × "+q).join("\n");
+window.location.href="https://wa.me/966579878790?text="+encodeURIComponent(msg);
+}
+showCategory(0);
+</script>
+</body>
+</html>
